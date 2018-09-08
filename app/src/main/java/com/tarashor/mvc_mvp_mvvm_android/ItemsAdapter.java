@@ -14,11 +14,23 @@ import java.util.List;
 
 
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> {
-    private List<Item> items = new ArrayList<>();
+    private List<Item> mItems = new ArrayList<>();
+
+    public void refreshItems(List<? extends Item> items){
+        mItems.clear();
+        this.mItems.addAll(items);
+        notifyDataSetChanged();
+    }
 
     public void addItem(Item item){
-        items.add(item);
-        notifyItemInserted(items.size()-1);
+        mItems.add(item);
+        notifyItemInserted(mItems.size()-1);
+    }
+
+    public Item removeItemByPosition(int position) {
+        Item removedItem = mItems.remove(position);
+        notifyItemRemoved(position);
+        return removedItem;
     }
 
     @NonNull
@@ -30,18 +42,15 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder itemViewHolder, int i) {
-        itemViewHolder.bindItem(items.get(i));
+        itemViewHolder.bindItem(mItems.get(i));
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return mItems.size();
     }
 
-    public void removeItemByPosition(int position) {
-        items.remove(position);
-        notifyItemRemoved(position);
-    }
+
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {
         private TextView itemNameView;

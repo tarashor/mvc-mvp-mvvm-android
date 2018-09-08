@@ -11,6 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tarashor.mvc_mvp_mvvm_android.data.Item;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.DataSource;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.DatabaseDatasource;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -39,14 +43,33 @@ public class MainActivityFragment extends Fragment {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                mAdapter.removeItemByPosition(viewHolder.getAdapterPosition());
+                Item removedItem = mAdapter.removeItemByPosition(viewHolder.getAdapterPosition());
+                DatabaseDatasource.getInstance().removeItem(removedItem);
             }
         });
         itemTouchhelper.attachToRecyclerView(mItemsView);
+
         return rootView;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        DatabaseDatasource.getInstance().getItems(new DataSource.LoadItemsCallback() {
+            @Override
+            public void onTasksLoaded(List<Item> items) {
+                mAdapter.refreshItems(items);
+            }
+
+            @Override
+            public void onDataNotAvailable() {
+
+            }
+        });
+    }
+
     public void addItem(Item newItem) {
+        DatabaseDatasource.getInstance().saveItem(newItem);
         mAdapter.addItem(newItem);
     }
 }
