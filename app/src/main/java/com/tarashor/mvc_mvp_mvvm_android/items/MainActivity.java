@@ -14,33 +14,37 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tarashor.mvc_mvp_mvvm_android.additem.AddItemActivity;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
 import com.tarashor.mvc_mvp_mvvm_android.login.LoginActivity;
 import com.tarashor.mvc_mvp_mvvm_android.R;
-import com.tarashor.mvc_mvp_mvvm_android.UserPreferences;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.UserPreferences;
 import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IMainView {
 
     private static final int ADD_ITEM_REQUEST_CODE = 1;
+
+    private ItemsController mController;
 
     private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!UserPreferences.getInstance(this).isUserLoggedIn()){
-            LoginActivity.start(this);
-            finish();
-        }
+
+        ItemsModel itemsModel = new ItemsModel(LocalDatasource.getInstance());
+        mController = new ItemsController(this, itemsModel, UserPreferences.getInstance(this));
+        mController.checkIfUserLoggedIn();
+
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddItemActivity.start(MainActivity.this, ADD_ITEM_REQUEST_CODE);
+                mController.addNewItem();
             }
         });
 
@@ -50,13 +54,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_ITEM_REQUEST_CODE){
-            if (resultCode == Activity.RESULT_OK){
-                Item newItem = AddItemActivity.getItem(data);
-                MainActivityFragment mainActivityFragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
-                mainActivityFragment.addItem(newItem);
-                Snackbar.make(mFab, newItem.getName(), Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
+            mController.handlerAddItemResult(resultCode, AddItemActivity.parseItem(data));
         }
     }
 
@@ -76,13 +74,17 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            UserPreferences.getInstance(MainActivity.this).setUserLoggedIn(false);
-            LoginActivity.start(MainActivity.this);
-            finish();
+            mController.logout();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mController = null;
     }
 
     public static void start(Context context) {
@@ -90,5 +92,27 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(context, MainActivity.class);
             context.startActivity(intent);
         }
+    }
+
+    @Override
+    public void startLogin() {
+        LoginActivity.start(MainActivity.this);
+        finish();
+    }
+
+    @Override
+    public void startAddItem() {
+        AddItemActivity.start(MainActivity.this, ADD_ITEM_REQUEST_CODE);
+    }
+
+    @Override
+    public ItemsController getController() {
+        return mController;
+    }
+
+    @Override
+    public void notifyItemAdded(Item newItem) {
+        Snackbar.make(mFab, newItem.getName(), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 }

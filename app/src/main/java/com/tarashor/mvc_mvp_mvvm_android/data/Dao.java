@@ -1,6 +1,6 @@
 package com.tarashor.mvc_mvp_mvvm_android.data;
 
-import com.tarashor.mvc_mvp_mvvm_android.datasource.DatabaseDatasource;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class Dao {
 
     public static Dao getInstance() {
         if (INSTANCE == null) {
-            synchronized (DatabaseDatasource.class) {
+            synchronized (LocalDatasource.class) {
                 if (INSTANCE == null) {
                     INSTANCE = new Dao();
                 }

@@ -4,7 +4,7 @@ import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 
 import java.util.List;
 
-public interface DataSource {
+public interface IDataSource {
 
     interface LoadItemsCallback {
 

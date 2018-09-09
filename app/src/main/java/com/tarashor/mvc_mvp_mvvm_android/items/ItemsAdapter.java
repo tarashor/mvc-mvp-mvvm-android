@@ -1,6 +1,9 @@
 package com.tarashor.mvc_mvp_mvvm_android.items;
 
 import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.AsyncDifferConfig;
+import android.support.v7.recyclerview.extensions.ListAdapter;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,25 +17,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> {
-    private List<Item> mItems = new ArrayList<>();
+public class ItemsAdapter extends ListAdapter<Item, ItemsAdapter.ItemViewHolder> {
+    private static final DiffUtil.ItemCallback<Item> diffCallback = new DiffUtil.ItemCallback<Item>(){
+        @Override
+        public boolean areItemsTheSame(@NonNull Item item, @NonNull Item t1) {
+            return item == t1;
+        }
 
-    public void refreshItems(List<? extends Item> items){
-        mItems.clear();
-        this.mItems.addAll(items);
-        notifyDataSetChanged();
+        @Override
+        public boolean areContentsTheSame(@NonNull Item item, @NonNull Item t1) {
+            return item.getName().equals(t1.getName());
+        }
+    };
+
+
+    public ItemsAdapter() {
+        super(diffCallback);
     }
 
-    public void addItem(Item item){
-        mItems.add(item);
-        notifyItemInserted(mItems.size()-1);
-    }
-
-    public Item removeItemByPosition(int position) {
-        Item removedItem = mItems.remove(position);
-        notifyItemRemoved(position);
-        return removedItem;
-    }
 
     @NonNull
     @Override
@@ -43,14 +45,8 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ItemViewHolder itemViewHolder, int i) {
-        itemViewHolder.bindItem(mItems.get(i));
+        itemViewHolder.bindItem(getItem(i));
     }
-
-    @Override
-    public int getItemCount() {
-        return mItems.size();
-    }
-
 
 
     public static class ItemViewHolder extends RecyclerView.ViewHolder {

@@ -3,22 +3,22 @@ package com.tarashor.mvc_mvp_mvvm_android.datasource;
 import com.tarashor.mvc_mvp_mvvm_android.data.Dao;
 import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 
-public class DatabaseDatasource implements DataSource {
+public class LocalDatasource implements IDataSource {
 
-    private static volatile DatabaseDatasource INSTANCE;
+    private static volatile LocalDatasource INSTANCE;
     private final Dao mDao;
 
 
     // Prevent direct instantiation.
-    private DatabaseDatasource() {
+    private LocalDatasource() {
         mDao = Dao.getInstance();
     }
 
-    public static DatabaseDatasource getInstance() {
+    public static LocalDatasource getInstance() {
         if (INSTANCE == null) {
-            synchronized (DatabaseDatasource.class) {
+            synchronized (LocalDatasource.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = new DatabaseDatasource();
+                    INSTANCE = new LocalDatasource();
                 }
             }
         }
