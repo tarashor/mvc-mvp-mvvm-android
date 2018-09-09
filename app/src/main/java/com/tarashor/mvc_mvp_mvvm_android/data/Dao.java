@@ -1,6 +1,6 @@
-package com.tarashor.mvc_mvp_mvvm_android.datasource;
+package com.tarashor.mvc_mvp_mvvm_android.data;
 
-import com.tarashor.mvc_mvp_mvvm_android.data.Item;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.DatabaseDatasource;
 
 import java.util.ArrayList;
 import java.util.List;

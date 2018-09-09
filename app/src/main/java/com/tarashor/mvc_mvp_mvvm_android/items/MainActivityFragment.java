@@ -1,4 +1,4 @@
-package com.tarashor.mvc_mvp_mvvm_android;
+package com.tarashor.mvc_mvp_mvvm_android.items;
 
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,9 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.tarashor.mvc_mvp_mvvm_android.R;
 import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.DataSource;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.DatabaseDatasource;
+import com.tarashor.mvc_mvp_mvvm_android.items.ItemsAdapter;
 
 import java.util.List;
 

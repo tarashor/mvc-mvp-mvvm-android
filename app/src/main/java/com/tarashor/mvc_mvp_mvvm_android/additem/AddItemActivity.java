@@ -1,4 +1,4 @@
-package com.tarashor.mvc_mvp_mvvm_android;
+package com.tarashor.mvc_mvp_mvvm_android.additem;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import com.tarashor.mvc_mvp_mvvm_android.R;
 import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 
 /**

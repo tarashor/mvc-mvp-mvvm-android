@@ -1,4 +1,4 @@
-package com.tarashor.mvc_mvp_mvvm_android;
+package com.tarashor.mvc_mvp_mvvm_android.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -30,6 +30,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.tarashor.mvc_mvp_mvvm_android.R;
+import com.tarashor.mvc_mvp_mvvm_android.UserPreferences;
+import com.tarashor.mvc_mvp_mvvm_android.items.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
