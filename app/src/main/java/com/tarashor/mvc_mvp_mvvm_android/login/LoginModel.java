@@ -27,15 +27,8 @@ class LoginModel {
         return mPassword;
     }
 
-    public void setEmailAndPassword(String email, String password) throws InvalidEmailException,
-            RequiredEmailException,
-            InvalidPasswordException {
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            throw new InvalidPasswordException();
-        }
-
-        // Check for a valid email address.
+    public void setEmail(String email) throws InvalidEmailException, RequiredEmailException
+    {
         if (TextUtils.isEmpty(email)) {
             throw new RequiredEmailException();
 
@@ -44,8 +37,14 @@ class LoginModel {
         }
 
         mEmail = email;
-        mPassword = password;
+    }
 
+    public void setPassword(String password) throws InvalidPasswordException {
+        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+            throw new InvalidPasswordException();
+        }
+
+        mPassword = password;
     }
 
     private boolean isEmailValid(String email) {

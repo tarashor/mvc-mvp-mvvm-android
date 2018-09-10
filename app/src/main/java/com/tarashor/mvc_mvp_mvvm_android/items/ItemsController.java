@@ -62,6 +62,7 @@ public class ItemsController {
     public void handlerAddItemResult(int resultCode, Item item) {
         if (resultCode == Activity.RESULT_OK){
             if (item != null){
+                mModel.addItem(item);
                 mMainView.notifyItemAdded(item);
             }
             refreshItems();

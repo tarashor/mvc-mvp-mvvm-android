@@ -37,7 +37,7 @@ public class AddItemActivity extends AppCompatActivity implements IItemView {
 
 
         if (!mController.getModel().isNewItem()) {
-            mNameEditText.setText(mController.getModel().getItem().getName());
+            mNameEditText.setText(mController.getModel().getItemName());
         }
 
         findViewById(R.id.save_btn).setOnClickListener(new View.OnClickListener() {

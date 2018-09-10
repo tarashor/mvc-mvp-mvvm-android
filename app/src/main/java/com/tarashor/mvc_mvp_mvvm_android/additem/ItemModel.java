@@ -14,10 +14,10 @@ public class ItemModel {
 //        mItem = mDatasource.getItemById(itemId);
 //    }
 
-    public ItemModel(IDataSource datasource) {
+    public ItemModel(IDataSource dataSource) {
         mItem = new Item();
         newItem = true;
-        mDataSource = datasource;
+        mDataSource = dataSource;
     }
 
     public String getItemName() {
@@ -30,11 +30,6 @@ public class ItemModel {
 
     public Item getItem() {
         return mItem;
-    }
-
-    public void saveItem() {
-        if (mDataSource == null) return;
-        mDataSource.saveItem(mItem);
     }
 
     public boolean isNewItem() {

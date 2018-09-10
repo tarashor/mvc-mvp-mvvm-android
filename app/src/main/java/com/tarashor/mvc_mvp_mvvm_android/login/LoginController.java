@@ -25,7 +25,8 @@ public class LoginController {
         mLoginView.cleanUpErrors();
 
         try {
-            mLoginModel.setEmailAndPassword(email, password);
+            mLoginModel.setPassword(password);
+            mLoginModel.setEmail(email);
             mAuthTask = new UserLoginTask(this);
             mAuthTask.execute((Void) null);
         } catch (InvalidEmailException e) {
@@ -35,8 +36,6 @@ public class LoginController {
         } catch (InvalidPasswordException e) {
             mLoginView.setPasswordError(R.string.error_invalid_password);
         }
-
-
     }
 
     public void loadEmailsToAutoComplete() {

@@ -11,7 +11,6 @@ public class ItemController {
 
     public void saveItem() {
         mItemModel.setItemName(mItemView.getTextNameField());
-        mItemModel.saveItem();
         mItemView.onPositiveButtonClicked();
     }
 
