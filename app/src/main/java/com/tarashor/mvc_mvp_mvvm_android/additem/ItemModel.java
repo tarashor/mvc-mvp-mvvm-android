@@ -7,6 +7,7 @@ import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
 public class ItemModel {
     private final IDataSource mDataSource;
     private Item mItem  = null;
+    private boolean newItem;
 
 //    public ItemModel(IDataSource datasource, int itemId){
 //        mDatasource = datasource;
@@ -15,6 +16,7 @@ public class ItemModel {
 
     public ItemModel(IDataSource datasource) {
         mItem = new Item();
+        newItem = true;
         mDataSource = datasource;
     }
 
@@ -33,5 +35,9 @@ public class ItemModel {
     public void saveItem() {
         if (mDataSource == null) return;
         mDataSource.saveItem(mItem);
+    }
+
+    public boolean isNewItem() {
+        return newItem;
     }
 }

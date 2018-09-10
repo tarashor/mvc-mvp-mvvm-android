@@ -8,7 +8,6 @@ import java.util.List;
 
 class LoginModel {
     private List<String> emails;
-
     private String mEmail;
     private String mPassword;
 
@@ -19,7 +18,6 @@ class LoginModel {
     public List<String> getEmails() {
         return emails;
     }
-
 
     public String getEmail() {
         return mEmail;
@@ -58,9 +56,5 @@ class LoginModel {
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
-    }
-
-    public Boolean isMatch(String email, String password) {
-        return mEmail.equals(email) && mPassword.equals(password);
     }
 }

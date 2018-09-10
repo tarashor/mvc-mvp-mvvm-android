@@ -69,6 +69,6 @@ public class LoginController {
     }
 
     public Boolean isModelMatch(String email, String password) {
-        return mLoginModel.isMatch(email, password);
+        return mLoginModel.getEmail().equals(email) && mLoginModel.getPassword().equals(password);
     }
 }

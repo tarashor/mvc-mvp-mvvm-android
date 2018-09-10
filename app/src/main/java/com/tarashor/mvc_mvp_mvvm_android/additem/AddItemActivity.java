@@ -30,16 +30,20 @@ public class AddItemActivity extends AppCompatActivity implements IItemView {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        mNameEditText = findViewById(R.id.name_text);
+
         ItemModel itemModel = new ItemModel(LocalDatasource.getInstance());
         mController = new ItemController(this, itemModel);
 
-        mNameEditText = findViewById(R.id.name_text);
-        mNameEditText.setText(itemModel.getItemName());
+
+        if (!mController.getModel().isNewItem()) {
+            mNameEditText.setText(mController.getModel().getItem().getName());
+        }
 
         findViewById(R.id.save_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mController.saveItem(getTextNameField());
+                mController.saveItem();
             }
         });
     }
@@ -48,15 +52,6 @@ public class AddItemActivity extends AppCompatActivity implements IItemView {
     protected void onDestroy() {
         super.onDestroy();
         mController = null;
-    }
-
-    private String getTextNameField() {
-        String itemName = "";
-        Editable nameEditable = mNameEditText.getText();
-        if (nameEditable != null){
-            itemName = nameEditable.toString();
-        }
-        return itemName;
     }
 
     @Override
@@ -89,13 +84,23 @@ public class AddItemActivity extends AppCompatActivity implements IItemView {
     }
 
     @Override
-    public void positiveButtonClicked(ItemModel mItemModel) {
-        setResult(Activity.RESULT_OK, createResultData(mItemModel.getItem()));
+    public String getTextNameField() {
+        String itemName = "";
+        Editable nameEditable = mNameEditText.getText();
+        if (nameEditable != null){
+            itemName = nameEditable.toString();
+        }
+        return itemName;
+    }
+
+    @Override
+    public void onPositiveButtonClicked() {
+        setResult(Activity.RESULT_OK, createResultData(mController.getModel().getItem()));
         finish();
     }
 
     @Override
-    public void negativeButtonPressed() {
+    public void onNegativeButtonPressed() {
         setResult(Activity.RESULT_CANCELED);
         finish();
     }

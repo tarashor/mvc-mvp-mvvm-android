@@ -9,13 +9,17 @@ public class ItemController {
         mItemModel = itemModel;
     }
 
-    public void saveItem(String itemName) {
-        mItemModel.setItemName(itemName);
+    public void saveItem() {
+        mItemModel.setItemName(mItemView.getTextNameField());
         mItemModel.saveItem();
-        mItemView.positiveButtonClicked(mItemModel);
+        mItemView.onPositiveButtonClicked();
     }
 
     public void cancel(){
-        mItemView.negativeButtonPressed();
+        mItemView.onNegativeButtonPressed();
+    }
+
+    public ItemModel getModel() {
+        return mItemModel;
     }
 }
