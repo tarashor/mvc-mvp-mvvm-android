@@ -5,16 +5,20 @@ import com.tarashor.mvc_mvp_mvvm_android.datasource.IUserPreferences;
 
 import java.util.List;
 
-public class LoginController {
+public class LoginPresenter {
     private final LoginModel mLoginModel;
-    private final ILoginView mLoginView;
+
+    private ILoginView mLoginView;
     private UserLoginTask mAuthTask;
     private IUserPreferences mUserPreferences;
 
-    public LoginController(LoginModel loginModel, IUserPreferences userPreferences, ILoginView loginView) {
-        mLoginModel = loginModel;
-        mLoginView = loginView;
+    public LoginPresenter(IUserPreferences userPreferences) {
         mUserPreferences = userPreferences;
+        mLoginModel = new LoginModel();
+    }
+
+    public void setLoginView(ILoginView loginView) {
+        this.mLoginView = mLoginView;
     }
 
     public void attemptLogin(String email, String password) {

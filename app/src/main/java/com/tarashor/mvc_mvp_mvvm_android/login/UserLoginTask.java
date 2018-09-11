@@ -8,21 +8,21 @@ import android.os.AsyncTask;
  */
 public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-    private final LoginController mController;
+    private final LoginPresenter mPresenter;
 
     private final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
 
 
-    UserLoginTask(LoginController controller) {
-        mController = controller;
+    UserLoginTask(LoginPresenter presenter) {
+        mPresenter = presenter;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        mController.authStarted();
+        mPresenter.authStarted();
     }
 
     @Override
@@ -38,7 +38,7 @@ public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         for (String credential : DUMMY_CREDENTIALS) {
             String[] pieces = credential.split(":");
-            return mController.isModelMatch(pieces[0], pieces[1]);
+            return mPresenter.isModelMatch(pieces[0], pieces[1]);
         }
 
         return false;
@@ -46,12 +46,12 @@ public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected void onPostExecute(final Boolean success) {
-        mController.authFinished();
-        mController.handleAuthResult(success);
+        mPresenter.authFinished();
+        mPresenter.handleAuthResult(success);
     }
 
     @Override
     protected void onCancelled() {
-        mController.authFinished();
+        mPresenter.authFinished();
     }
 }

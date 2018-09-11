@@ -12,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -34,7 +33,7 @@ import static android.Manifest.permission.READ_CONTACTS;
  */
 public class LoginActivity extends AppCompatActivity implements ILoginView {
 
-    private LoginController mController;
+    private LoginPresenter mPresenter;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -53,8 +52,8 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        LoginModel loginModel = new LoginModel();
-        mController = new LoginController(loginModel, UserPreferences.getInstance(this),this);
+        mPresenter = new LoginPresenter(UserPreferences.getInstance(this));
+        mPresenter.setLoginView(this);
 
         mEmailView = findViewById(R.id.email);
         populateAutoComplete();
@@ -88,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
             return;
         }
 
-        mController.loadEmailsToAutoComplete();
+        mPresenter.loadEmailsToAutoComplete();
     }
 
     private boolean mayRequestContacts() {
@@ -131,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements ILoginView {
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        mController.attemptLogin(email, password);
+        mPresenter.attemptLogin(email, password);
     }
 
     @Override

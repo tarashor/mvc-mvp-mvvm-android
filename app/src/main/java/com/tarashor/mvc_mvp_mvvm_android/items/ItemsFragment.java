@@ -1,6 +1,5 @@
 package com.tarashor.mvc_mvp_mvvm_android.items;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,34 +11,24 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.tarashor.mvc_mvp_mvvm_android.R;
+import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class ItemsFragment extends Fragment implements IItemsView {
-    private ItemsController mController;
+    private ItemsPresenter mPresenter;
     private RecyclerView mItemsRecyckerView;
     private ItemsAdapter mAdapter;
 
     public ItemsFragment() {
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof IMainView){
-            mController = ((IMainView)context).getController();
-            mController.setItemsView(this);
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mController.setItemsView(null);
-        mController = null;
+    public void setPresenter(ItemsPresenter itemsPresenter){
+        mPresenter = itemsPresenter;
     }
 
     @Override
@@ -58,7 +47,7 @@ public class ItemsFragment extends Fragment implements IItemsView {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-                mController.removeItemByPosition(viewHolder.getAdapterPosition());
+                mPresenter.removeItemByPosition(viewHolder.getAdapterPosition());
             }
         });
         itemTouchhelper.attachToRecyclerView(mItemsRecyckerView);
@@ -69,12 +58,12 @@ public class ItemsFragment extends Fragment implements IItemsView {
     @Override
     public void onResume() {
         super.onResume();
-        mController.refreshItems();
+        mPresenter.refreshItems();
     }
 
 
     @Override
-    public void showModel(ItemsModel model) {
-        mAdapter.submitList(new ArrayList<>(model.getItems()));
+    public void showItems(List<Item> items) {
+        mAdapter.submitList(items);
     }
 }

@@ -5,22 +5,42 @@ import android.app.Activity;
 import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.IDataSource;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.IUserPreferences;
+import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
+
+import java.util.ArrayList;
 
 
-public class ItemsController {
+public class ItemsPresenter {
     private final IUserPreferences mUserPreferences;
-    private final IMainView mMainView;
-
     private final ItemsModel mModel;
+
+    private IMainView mMainView;
 
     private IItemsView mItemsView;
 
 
-    public ItemsController(IMainView mainView, ItemsModel itemsModel, IUserPreferences userPreferences) {
-        mMainView = mainView;
-        mModel = itemsModel;
+    public ItemsPresenter(IDataSource dataSource, IUserPreferences userPreferences) {
+        mModel = new ItemsModel(dataSource);
         mUserPreferences = userPreferences;
     }
+
+    public void start() {
+        if (!mUserPreferences.isUserLoggedIn()){
+            mMainView.startLogin();
+        }
+        mModel.refreshItems();
+        refreshItemsView();
+
+    }
+
+    public void setMainView(IMainView mainView){
+        mMainView = mainView;
+    }
+
+    public void setItemsView(IItemsView itemsView) {
+        this.mItemsView = itemsView;
+    }
+
 
     public void logout() {
         mUserPreferences.setUserLoggedIn(false);
@@ -29,16 +49,6 @@ public class ItemsController {
 
     public void addNewItem() {
         mMainView.startAddItem();
-    }
-
-    public void checkIfUserLoggedIn() {
-        if (!mUserPreferences.isUserLoggedIn()){
-            mMainView.startLogin();
-        }
-    }
-
-    public void setItemsView(IItemsView itemsView) {
-        this.mItemsView = itemsView;
     }
 
 
@@ -55,17 +65,16 @@ public class ItemsController {
 
     private void refreshItemsView(){
         if (mItemsView != null){
-            mItemsView.showModel(mModel);
+            mItemsView.showItems(new ArrayList<>(mModel.getItems()));
         }
     }
 
-    public void handlerAddItemResult(int resultCode, Item item) {
-        if (resultCode == Activity.RESULT_OK){
-            if (item != null){
-                mModel.addItem(item);
-                mMainView.notifyItemAdded(item);
-            }
+    public void handlerAddItemResult(int resultCode, String message) {
+        if (resultCode == Activity.RESULT_OK) {
+            mMainView.notifyItemAdded(message);
             refreshItems();
         }
     }
+
+
 }

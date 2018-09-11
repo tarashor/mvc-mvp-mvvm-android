@@ -20,10 +20,6 @@ public class ItemModel {
         mDataSource = dataSource;
     }
 
-    public String getItemName() {
-        return mItem.getName();
-    }
-
     public void setItemName(String itemName) {
         mItem.setName(itemName);
     }
@@ -34,5 +30,10 @@ public class ItemModel {
 
     public boolean isNewItem() {
         return newItem;
+    }
+
+    public void saveItem() {
+        if (mDataSource == null) return;
+        mDataSource.saveItem(mItem);
     }
 }

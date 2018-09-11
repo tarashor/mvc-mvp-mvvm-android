@@ -1,6 +1,5 @@
 package com.tarashor.mvc_mvp_mvvm_android.items;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,13 +17,12 @@ import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
 import com.tarashor.mvc_mvp_mvvm_android.login.LoginActivity;
 import com.tarashor.mvc_mvp_mvvm_android.R;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.UserPreferences;
-import com.tarashor.mvc_mvp_mvvm_android.data.Item;
 
 public class MainActivity extends AppCompatActivity implements IMainView {
 
     private static final int ADD_ITEM_REQUEST_CODE = 1;
 
-    private ItemsController mController;
+    private ItemsPresenter mPresenter;
 
     private FloatingActionButton mFab;
 
@@ -32,9 +30,8 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ItemsModel itemsModel = new ItemsModel(LocalDatasource.getInstance());
-        mController = new ItemsController(this, itemsModel, UserPreferences.getInstance(this));
-        mController.checkIfUserLoggedIn();
+        mPresenter = new ItemsPresenter(LocalDatasource.getInstance(), UserPreferences.getInstance(this));
+        mPresenter.setMainView(this);
 
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -44,17 +41,28 @@ public class MainActivity extends AppCompatActivity implements IMainView {
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mController.addNewItem();
+                mPresenter.addNewItem();
             }
         });
 
+        ItemsFragment itemsFragment = (ItemsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        if (itemsFragment != null) {
+            mPresenter.setItemsView(itemsFragment);
+            itemsFragment.setPresenter(mPresenter);
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mPresenter.start();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_ITEM_REQUEST_CODE){
-            mController.handlerAddItemResult(resultCode, AddItemActivity.parseItem(data));
+            mPresenter.handlerAddItemResult(resultCode, AddItemActivity.parseMessage(data));
         }
     }
 
@@ -74,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            mController.logout();
+            mPresenter.logout();
             return true;
         }
 
@@ -84,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mController = null;
+        mPresenter = null;
     }
 
     public static void start(Context context) {
@@ -106,13 +114,8 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     }
 
     @Override
-    public ItemsController getController() {
-        return mController;
-    }
-
-    @Override
-    public void notifyItemAdded(Item newItem) {
-        Snackbar.make(mFab, newItem.getName(), Snackbar.LENGTH_LONG)
+    public void notifyItemAdded(String message) {
+        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 }
