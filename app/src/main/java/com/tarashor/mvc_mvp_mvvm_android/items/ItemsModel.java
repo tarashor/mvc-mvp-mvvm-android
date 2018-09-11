@@ -37,12 +37,6 @@ public class ItemsModel {
         mDataSource.removeItem(removedItem);
     }
 
-    public void addItem(Item newItem) {
-        mItems.add(newItem);
-        if (mDataSource == null) return;
-        mDataSource.saveItem(newItem);
-    }
-
 
     public List<Item> getItems() {
         return mItems;

@@ -2,67 +2,58 @@ package com.tarashor.mvc_mvp_mvvm_android.items;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.tarashor.mvc_mvp_mvvm_android.additem.AddItemActivity;
+import com.tarashor.mvc_mvp_mvvm_android.databinding.ActivityAdditemBinding;
+import com.tarashor.mvc_mvp_mvvm_android.databinding.ActivityMainBinding;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
 import com.tarashor.mvc_mvp_mvvm_android.login.LoginActivity;
 import com.tarashor.mvc_mvp_mvvm_android.R;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.UserPreferences;
 
-public class MainActivity extends AppCompatActivity implements IMainView {
+public class MainActivity extends AppCompatActivity implements IItemsNavigator {
 
     private static final int ADD_ITEM_REQUEST_CODE = 1;
 
-    private ItemsPresenter mPresenter;
-
-    private FloatingActionButton mFab;
+    private ItemsViewModel mItemsViewModel;
+    private ActivityMainBinding mActivityMainBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPresenter = new ItemsPresenter(LocalDatasource.getInstance(), UserPreferences.getInstance(this));
-        mPresenter.setMainView(this);
+        mItemsViewModel = new ItemsViewModel(LocalDatasource.getInstance(), UserPreferences.getInstance(this));
+        mItemsViewModel.setItemsNavigator(this);
 
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        mActivityMainBinding = DataBindingUtil.setContentView(this,R.layout.activity_main);
+        mActivityMainBinding.setViewModel(mItemsViewModel);
 
-        mFab = findViewById(R.id.fab);
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.addNewItem();
-            }
-        });
+        setSupportActionBar(mActivityMainBinding.toolbar);
 
         ItemsFragment itemsFragment = (ItemsFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
         if (itemsFragment != null) {
-            mPresenter.setItemsView(itemsFragment);
-            itemsFragment.setPresenter(mPresenter);
+            itemsFragment.setViewModel(mItemsViewModel);
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mPresenter.start();
+        mItemsViewModel.start();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ADD_ITEM_REQUEST_CODE){
-            mPresenter.handlerAddItemResult(resultCode, AddItemActivity.parseMessage(data));
+            mItemsViewModel.handlerAddItemResult(resultCode, AddItemActivity.parseMessage(data));
         }
     }
 
@@ -82,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            mPresenter.logout();
+            mItemsViewModel.logout();
             return true;
         }
 
@@ -92,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPresenter = null;
+        mItemsViewModel = null;
     }
 
     public static void start(Context context) {
@@ -115,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements IMainView {
 
     @Override
     public void notifyItemAdded(String message) {
-        Snackbar.make(mFab, message, Snackbar.LENGTH_LONG)
+        Snackbar.make(mActivityMainBinding.fab, message, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
 }
