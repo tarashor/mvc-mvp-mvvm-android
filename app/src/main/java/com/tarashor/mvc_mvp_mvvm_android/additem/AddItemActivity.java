@@ -2,62 +2,46 @@ package com.tarashor.mvc_mvp_mvvm_android.additem;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Editable;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
 
 import com.tarashor.mvc_mvp_mvvm_android.R;
-import com.tarashor.mvc_mvp_mvvm_android.data.Item;
+import com.tarashor.mvc_mvp_mvvm_android.databinding.ActivityAdditemBinding;
 import com.tarashor.mvc_mvp_mvvm_android.datasource.LocalDatasource;
 
 
-public class AddItemActivity extends AppCompatActivity implements IItemView {
-
-    private ItemPresenter mPresenter;
+public class AddItemActivity extends AppCompatActivity implements IItemNavigator {
 
     private static final String NEW_ITEM_MESSAGE_EXTRA = "new_item_extra";
-    private EditText mNameEditText;
+    private AddItemViewModel mAddItemViewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_additem);
+
+        ActivityAdditemBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_additem);
+        mAddItemViewModel = new AddItemViewModel(LocalDatasource.getInstance(), this);
+        binding.setViewModel(mAddItemViewModel);
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mNameEditText = findViewById(R.id.name_text);
 
-        mPresenter = new ItemPresenter(LocalDatasource.getInstance());
-        mPresenter.setItemView(this);
-
-        findViewById(R.id.save_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mPresenter.saveItem();
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mPresenter.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPresenter = null;
+        mAddItemViewModel.destroy();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home){
-            mPresenter.cancel();
+            mAddItemViewModel.cancel();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -74,21 +58,6 @@ public class AddItemActivity extends AppCompatActivity implements IItemView {
         Intent intent = new Intent();
         intent.putExtra(NEW_ITEM_MESSAGE_EXTRA, messageToShow);
         return intent;
-    }
-
-    @Override
-    public String getTextNameField() {
-        String itemName = "";
-        Editable nameEditable = mNameEditText.getText();
-        if (nameEditable != null){
-            itemName = nameEditable.toString();
-        }
-        return itemName;
-    }
-
-    @Override
-    public void setTextFieldName(String name) {
-        mNameEditText.setText(name);
     }
 
     @Override
