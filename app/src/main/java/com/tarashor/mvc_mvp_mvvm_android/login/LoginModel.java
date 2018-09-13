@@ -7,17 +7,8 @@ import com.tarashor.mvc_mvp_mvvm_android.R;
 import java.util.List;
 
 class LoginModel {
-    private List<String> emails;
     private String mEmail;
     private String mPassword;
-
-    public void setEmails(List<String> emails) {
-        this.emails = emails;
-    }
-
-    public List<String> getEmails() {
-        return emails;
-    }
 
     public String getEmail() {
         return mEmail;
